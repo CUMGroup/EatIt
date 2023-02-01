@@ -11,7 +11,7 @@ namespace EatIt.Core.Models.Joined {
     public class ShoppingIngredient {
 
         [Required]
-        public double AmountForTwo { get; set; }
+        public double Amount { get; set; }
         [Required, MaxLength(5)]
         public string Unit { get; set; }
 

@@ -9,10 +9,7 @@ using System.Threading.Tasks;
 namespace EatIt.Core.Models.Atomic {
     public class ShoppingList {
 
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
-
-        [ForeignKey("User"), Required]
+        [Key, ForeignKey("User"), Required]
         public Guid UserId { get; set; }
         public User User { get; set; }
 
