@@ -1,10 +1,10 @@
 ﻿using EatIt.Core.Common.DTO;
-using EatIt.Core.Models.Atomic;
+using EatIt.Core.Common.DTO.User;
 
 namespace EatIt.Core.Common.Interfaces {
     public interface IUserService {
-        Task<User> GetUserAsync(string userId);
+        Task<UserOverview?> GetUserOverviewAsync(Guid userId);
 
-        Task<bool> IsInRoleAsync(string userId, string role);
+        Task<bool> IsInRoleAsync(Guid userId, string role);
     }
 }
