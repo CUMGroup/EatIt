@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace EatIt.Core.Common.DTO.Recipe {
     public class RecipeDetail {
 
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Required, MaxLength(200)]
         public string Title { get; set; }
@@ -22,8 +22,8 @@ namespace EatIt.Core.Common.DTO.Recipe {
         public string Description { get; set; }
         public IEnumerable<Ingredient> Ingredients { get; set;}
         
-        public Guid AuthorId { get; set; }
-        public string UserName { get; set; }
+        public Guid? AuthorId { get; set; }
+        public string? UserName { get; set; }
 
     }
 }

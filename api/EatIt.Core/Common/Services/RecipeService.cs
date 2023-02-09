@@ -55,10 +55,10 @@ namespace EatIt.Core.Common.Services {
                 .Select(e => MapRecipeToOverview(e))
                 .ToListAsync();
         }
-        public async Task<IEnumerable<RecipeOverview>> GetRecipesByCategoryAsync(IEnumerable<RecipeCategory> categories) {
+        public async Task<IEnumerable<RecipeOverview>> GetRecipesByCategoryAsync(IEnumerable<string> categories) {
             return await _dbContext.Recipes
                 .Include(e => e.Category)
-                .Where(e => categories.Contains(e.Category))
+                .Where(e => e.Category != null && categories.Contains(e.Category.ToString()))
                 .Select(e => MapRecipeToOverview(e))
                 .ToListAsync();
         }
