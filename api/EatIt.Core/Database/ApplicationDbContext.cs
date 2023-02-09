@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace EatIt.Core.Database {
-    internal class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>, IApplicationDbContext {
+    internal class ApplicationDbContext : IdentityDbContext<User, Role, Guid>, IApplicationDbContext {
         public DbSet<Ingredient> Ingredients { get ; set ; }
         public DbSet<IngredientCategory> IngredientCategories { get ; set ; }
         public DbSet<Recipe> Recipes { get ; set ; }
