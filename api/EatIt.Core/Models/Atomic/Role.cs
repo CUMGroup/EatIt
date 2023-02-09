@@ -7,5 +7,10 @@ using System.Threading.Tasks;
 
 namespace EatIt.Core.Models.Atomic {
     public class Role : IdentityRole<Guid> {
+
+        public Role() : base(){ }
+
+        public Role(String role) : base(role){
+        }
     }
 }

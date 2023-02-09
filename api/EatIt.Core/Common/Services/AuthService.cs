@@ -1,4 +1,5 @@
-﻿using EatIt.Core.Common.DTO;
+﻿using EatIt.Core.Common.Configuration;
+using EatIt.Core.Common.DTO;
 using EatIt.Core.Common.DTO.Auth;
 using EatIt.Core.Common.Interfaces;
 using EatIt.Core.Models.Atomic;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
@@ -13,14 +15,16 @@ using System.Text;
 namespace EatIt.Core.Common.Services {
     internal class AuthService : IAuthService {
 
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly IApplicationDbContext _dbContext;
 
-        public AuthService(RoleManager<IdentityRole> _roleManager, UserManager<User> _userManager, IConfiguration _configuration) {
+        public AuthService(RoleManager<Role> _roleManager, UserManager<User> _userManager, IConfiguration _configuration, IApplicationDbContext _dbContext) {
             this._roleManager = _roleManager;
             this._userManager = _userManager;
             this._configuration = _configuration;
+            this._dbContext = _dbContext;
         }
 
         public async Task CreateRolesAsync<TRoles>() {
@@ -31,7 +35,7 @@ namespace EatIt.Core.Common.Services {
 
             foreach (string r in roles) {
                 if (!(await _roleManager.RoleExistsAsync(r))) {
-                    await _roleManager.CreateAsync(new IdentityRole(r));
+                    await _roleManager.CreateAsync(new Role(r));
                 }
             }
         }
@@ -78,12 +82,20 @@ namespace EatIt.Core.Common.Services {
                 SecurityStamp = Guid.NewGuid().ToString()
             };
 
+            // Create User
             var result = await _userManager.CreateAsync(user, registerModel.Password);
             if (!result.Succeeded)
-                return new LoginResultApiModel(Result.Failure("Failed to create Account"));
+                return new LoginResultApiModel(Result.Failure(result.Errors.Select(e => e.Description).ToList()));
+            
+            // Create Shopping List for user
+            _dbContext.ShoppingLists.Add(new ShoppingList { User = user });
+            await _dbContext.SaveChangesAsync();
+            
 
-            if (!await _roleManager.RoleExistsAsync(role)) {
-                return new LoginResultApiModel(Result.Failure("Failed to create Account"));
+            if (!await _roleManager.RoleExistsAsync(role))
+                await CreateRolesAsync<UserRoles>();
+            if(!await _roleManager.RoleExistsAsync(role)) {
+                return new LoginResultApiModel(Result.Failure("Failed to add to Role. Account was created without it."));
             }
 
             await _userManager.AddToRoleAsync(user, role);

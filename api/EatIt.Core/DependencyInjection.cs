@@ -1,4 +1,5 @@
 ﻿using EatIt.Core.Common.Interfaces;
+using EatIt.Core.Common.Services;
 using EatIt.Core.Database;
 using EatIt.Core.Models.Atomic;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,6 +39,9 @@ namespace EatIt.Core {
                     ValidateIssuerSigningKey = true
                 };
             });
+
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IAuthService, AuthService>();
 
             return services;
         }

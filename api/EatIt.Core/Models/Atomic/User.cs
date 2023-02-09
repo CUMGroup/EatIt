@@ -17,7 +17,6 @@ namespace EatIt.Core.Models.Atomic {
 
         public ICollection<WeeklyPlan> WeeklyPlans { get; set;}
 
-        [Required]
         public ShoppingList ShoppingList { get; set; }
 
     }

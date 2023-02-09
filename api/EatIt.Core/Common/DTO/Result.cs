@@ -24,8 +24,8 @@ namespace EatIt.Core.Common.DTO {
             return new Result(false, errors);
         }
 
-        public static Result Failure(string error) {
-            return new Result(false, new[] { error });
+        public static Result Failure(params string[] error) {
+            return new Result(false, error);
         }
     }
 }
