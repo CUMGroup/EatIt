@@ -17,5 +17,8 @@ namespace EatIt.Core.Common.Interfaces {
         public Task<IEnumerable<RecipeOverview>> GetRecipesByNameContainsAsync(string name);
         public Task<IEnumerable<RecipeOverview>> GetRecipesByCategoryAsync(IEnumerable<RecipeCategory> categories);
         public Task<IEnumerable<RecipeOverview>> GetRecipesWithIngredientsAsync(IEnumerable<Ingredient> ingredients);
+
+        public Task<RecipeOperationResultModel> UpdateRecipeAsync(RecipeDetail recipe);
+        public Task<RecipeOperationResultModel> DeleteRecipeAsync(Guid recipeId);
     }
 }

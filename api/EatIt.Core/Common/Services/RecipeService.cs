@@ -1,4 +1,5 @@
 ﻿
+using EatIt.Core.Common.DTO;
 using EatIt.Core.Common.DTO.Recipe;
 using EatIt.Core.Common.Interfaces;
 using EatIt.Core.Models.Atomic;
@@ -69,7 +70,54 @@ namespace EatIt.Core.Common.Services {
                 .ToListAsync();
         }
 
+        public async Task<RecipeOperationResultModel> UpdateRecipeAsync(RecipeDetail recipe) {
+            var resultRecipe = new Recipe {
+                Title = recipe.Title,
+                AuthorId = recipe.AuthorId,
+                Description = recipe.Description,
+                Difficulty = recipe.Difficulty,
+                TotalDuration = recipe.TotalDuration,
+                WorkDuration = recipe.WorkDuration
+            };
 
+            // handle category
+            var category = await _dbContext.RecipeCategories.Where(e => e.Name.Equals(recipe.Category)).FirstOrDefaultAsync();
+            if(recipe.Category != null && category == null) {
+                await _dbContext.RecipeCategories.AddAsync(category = new RecipeCategory { Name = recipe.Category });
+            }
+            resultRecipe.Category = category;
+            recipe.Ingredients ??= new List<Ingredient>();
+            // handle ingredients
+            foreach(var ingred in recipe.Ingredients) {
+                if(ingred != null && ! await _dbContext.Ingredients.ContainsAsync(ingred)) {
+                    await _dbContext.Ingredients.AddAsync(ingred);
+                }
+            }
+            resultRecipe.Ingredients = recipe.Ingredients.ToList();
+
+            // handle recipe
+            await _dbContext.Recipes.AddAsync(resultRecipe);
+
+            var updated = await _dbContext.SaveChangesAsync();
+
+            return updated > 0 ?
+                new RecipeOperationResultModel { Recipe = resultRecipe, Result = Result.Success() }
+                : new RecipeOperationResultModel { Result = Result.Failure("Failed to create Recipe") };
+        }
+        public async Task<RecipeOperationResultModel> DeleteRecipeAsync(Guid recipeId) {
+
+            var recipe = await _dbContext.Recipes.FindAsync(recipeId);
+
+            int updated = 0;
+            if (recipe != null) {
+                _dbContext.Recipes.Remove(recipe);
+                updated = await _dbContext.SaveChangesAsync();
+            }
+
+            return updated > 0 ?
+                new RecipeOperationResultModel { Recipe = recipe, Result = Result.Success() }
+                : new RecipeOperationResultModel { Result = recipe == null ? Result.Failure("Could not find the Recipe") : Result.Failure("Failed to remove Recipe") };
+        }
 
         private RecipeOverview MapRecipeToOverview(Recipe e) {
             return new RecipeOverview {
@@ -86,7 +134,7 @@ namespace EatIt.Core.Common.Services {
             return new RecipeDetail {
                 Id = e.Id,
                 Title = e.Title,
-                Category = e.Category,
+                Category = e.Category?.ToString() ?? "",
                 DateUpdated = e.DateUpdated,
                 Difficulty = e.Difficulty,
                 WorkDuration = e.WorkDuration,
