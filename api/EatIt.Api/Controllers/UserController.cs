@@ -23,7 +23,7 @@ namespace EatIt.Api.Controllers {
             if (userId == null) {
                 return Forbid();
             }
-            var user = _userService.GetUserOverviewAsync(new Guid(userId));
+            var user = await _userService.GetUserOverviewAsync(new Guid(userId));
             return user != null ? Ok(user) : NotFound();
         }
 

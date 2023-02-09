@@ -34,8 +34,8 @@ namespace EatIt.Core.Common.Services {
                 .ToListAsync();
         }
 
-        public Task<RecipeDetail?> GetDetailedRecipeByIdAsync(Guid recipeId) {
-            return _dbContext.Recipes
+        public async Task<RecipeDetail?> GetDetailedRecipeByIdAsync(Guid recipeId) {
+            return await _dbContext.Recipes
                 .Where(e => e.Id.Equals(recipeId))
                 .Include(e => e.Category)
                 .Include(e => e.Ingredients)
@@ -71,9 +71,16 @@ namespace EatIt.Core.Common.Services {
         }
 
         public async Task<RecipeOperationResultModel> UpdateRecipeAsync(RecipeDetail recipe) {
+            if (recipe.AuthorId == null)
+                return new RecipeOperationResultModel { Result = Result.Failure("Author Id cannot be null") };
+
+            bool validAuthor = await _userManager.Users.Where(e => e.Id.Equals(recipe.AuthorId)).AnyAsync();
+            if(!validAuthor)
+                return new RecipeOperationResultModel { Result = Result.Failure("Invalid Author: Does not exist") };
+
             var resultRecipe = new Recipe {
                 Title = recipe.Title,
-                AuthorId = recipe.AuthorId,
+                AuthorId = (Guid)recipe.AuthorId,
                 Description = recipe.Description,
                 Difficulty = recipe.Difficulty,
                 TotalDuration = recipe.TotalDuration,

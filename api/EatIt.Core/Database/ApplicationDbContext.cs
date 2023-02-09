@@ -103,7 +103,7 @@ namespace EatIt.Core.Database {
             return Database.MigrateAsync();
         }
 
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken) {
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken) {
             return base.SaveChangesAsync(cancellationToken);
         }
 
