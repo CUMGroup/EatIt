@@ -28,7 +28,7 @@ namespace EatIt.Api.Controllers {
         }
 
         [HttpPost]
-        [Route("{id:Guid}")]
+        [Route("")]
         [Authorize]
         public async Task<IActionResult> UpdateRecipe([FromBody]RecipeDetail recipe) {
             var userIdStr = GetUserId();
@@ -105,6 +105,27 @@ namespace EatIt.Api.Controllers {
         }
 
         #endregion
+
+        [HttpGet]
+        [Route("categories/startswith")]
+        public async Task<IActionResult> GetCategoriesStartsWith(string name) {
+            var res = await _recipeService.GetCategoriesStartsWith(name);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Route("categories/{id:Guid}")]
+        public async Task<IActionResult> GetCategoriesContains(Guid id) {
+            var res = await _recipeService.GetCategoryByIdAsync(id);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Route("categories")]
+        public async Task<IActionResult> GetAllCategories() {
+            var res = await _recipeService.GetAllCategories();
+            return Ok(res);
+        }
 
         private string? GetUserId() {
             return HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;

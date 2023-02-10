@@ -1,10 +1,7 @@
 ﻿using EatIt.Core.Models.Atomic;
+using EatIt.Core.Models.Joined;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace EatIt.Core.Common.Interfaces {
     public interface IApplicationDbContext {
@@ -15,6 +12,8 @@ namespace EatIt.Core.Common.Interfaces {
         public DbSet<RecipeCategory> RecipeCategories { get; set;}
         public DbSet<ShoppingList> ShoppingLists { get; set;}
         public DbSet<WeeklyPlan> WeeklyPlans { get; set;}
+
+        public DbSet<RecipeIngredient> RecipeIngredientsJoin { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         Task<int> SaveChangesAsync();

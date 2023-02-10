@@ -1,5 +1,6 @@
 ﻿
 using EatIt.Core.Models.Atomic;
+using EatIt.Core.Models.Joined;
 using System.ComponentModel.DataAnnotations;
 
 namespace EatIt.Core.Common.DTO.Recipe {
@@ -20,7 +21,7 @@ namespace EatIt.Core.Common.DTO.Recipe {
         public TimeSpan TotalDuration { get; set; }
         [Required]
         public string Description { get; set; }
-        public IEnumerable<Ingredient> Ingredients { get; set;}
+        public IEnumerable<RecipeIngredient> RecipeIngredients { get; set;}
         
         public Guid? AuthorId { get; set; }
         public string? UserName { get; set; }

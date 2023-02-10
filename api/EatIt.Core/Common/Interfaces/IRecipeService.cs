@@ -1,5 +1,6 @@
 ﻿using EatIt.Core.Common.DTO.Recipe;
 using EatIt.Core.Models.Atomic;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,11 @@ namespace EatIt.Core.Common.Interfaces {
 
         public Task<RecipeOperationResultModel> UpdateRecipeAsync(RecipeDetail recipe);
         public Task<RecipeOperationResultModel> DeleteRecipeAsync(Guid recipeId);
+
+        public Task<IEnumerable<RecipeCategory>> GetAllCategories();
+
+        public Task<IEnumerable<RecipeCategory>> GetCategoriesStartsWith(string name);
+
+        public Task<RecipeCategory?> GetCategoryByIdAsync(Guid catId);
     }
 }

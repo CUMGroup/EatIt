@@ -16,11 +16,11 @@ namespace EatIt.Core.Models.Joined {
         public string Unit { get; set; }
 
         [ForeignKey("Recipe")]
-        public Guid RecipesId { get; set; }
-        public Recipe Recipe { get; set; }
+        public Guid RecipeId { get; set; }
+        //public Recipe Recipe { get; set; }
 
         [ForeignKey("Ingredient")]
-        public Guid IngredientsId { get; set; }
+        public Guid IngredientId { get; set; }
         public Ingredient Ingredient { get; set; }
     }
 }

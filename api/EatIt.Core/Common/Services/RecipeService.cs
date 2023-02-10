@@ -38,34 +38,36 @@ namespace EatIt.Core.Common.Services {
             return await _dbContext.Recipes
                 .Where(e => e.Id.Equals(recipeId))
                 .Include(e => e.Category)
-                .Include(e => e.Ingredients)
+                .Include(e => e.RecipeIngredients)
+                .ThenInclude(e => e.Ingredient)
                 .Include(e => e.Author)
                 .Select(e => MapRecipeToDetail(e))
                 .FirstOrDefaultAsync();
         }
         public async Task<IEnumerable<RecipeOverview>> GetRecipesByNameStartsWithAsync(string name) {
             return await _dbContext.Recipes
-                .Where(e => e.Title.StartsWith(name))
+                .Where(e => e.Title.ToLower().StartsWith(name.ToLower()))
                 .Select(e => MapRecipeToOverview(e))
                 .ToListAsync();
         }
         public async Task<IEnumerable<RecipeOverview>> GetRecipesByNameContainsAsync(string name) {
             return await _dbContext.Recipes
-                .Where(e => e.Title.Contains(name))
+                .Where(e => e.Title.ToLower().Contains(name.ToLower()))
                 .Select(e => MapRecipeToOverview(e))
                 .ToListAsync();
         }
         public async Task<IEnumerable<RecipeOverview>> GetRecipesByCategoryAsync(IEnumerable<string> categories) {
             return await _dbContext.Recipes
                 .Include(e => e.Category)
-                .Where(e => e.Category != null && categories.Contains(e.Category.ToString()))
+                .Where(e => e.Category != null && categories.Select(e => e.ToLower()).Contains(e.Category.ToString().ToLower()))
                 .Select(e => MapRecipeToOverview(e))
                 .ToListAsync();
         }
         public async Task<IEnumerable<RecipeOverview>> GetRecipesWithIngredientsAsync(IEnumerable<Ingredient> ingredients) {
             return await _dbContext.Recipes
-                .Include(e => e.Ingredients)
-                .Where(e => e.Ingredients.Intersect(ingredients).Any())
+                .Include(e => e.RecipeIngredients)
+                .ThenInclude(e => e.Ingredient)
+                .Where(e => e.RecipeIngredients.Select(e => e.Ingredient).Intersect(ingredients).Any())
                 .Select(e => MapRecipeToOverview(e))
                 .ToListAsync();
         }
@@ -93,17 +95,16 @@ namespace EatIt.Core.Common.Services {
                 await _dbContext.RecipeCategories.AddAsync(category = new RecipeCategory { Name = recipe.Category });
             }
             resultRecipe.Category = category;
-            recipe.Ingredients ??= new List<Ingredient>();
             // handle ingredients
-            foreach(var ingred in recipe.Ingredients) {
+            foreach(var ingred in recipe.RecipeIngredients.Select(e => e.Ingredient)) {
                 if(ingred != null && ! await _dbContext.Ingredients.ContainsAsync(ingred)) {
                     await _dbContext.Ingredients.AddAsync(ingred);
                 }
             }
-            resultRecipe.Ingredients = recipe.Ingredients.ToList();
+            resultRecipe.RecipeIngredients = recipe.RecipeIngredients.ToList();
 
             // handle recipe
-            await _dbContext.Recipes.AddAsync(resultRecipe);
+            _dbContext.Recipes.Update(resultRecipe);
 
             var updated = await _dbContext.SaveChangesAsync();
 
@@ -124,6 +125,18 @@ namespace EatIt.Core.Common.Services {
             return updated > 0 ?
                 new RecipeOperationResultModel { Recipe = recipe, Result = Result.Success() }
                 : new RecipeOperationResultModel { Result = recipe == null ? Result.Failure("Could not find the Recipe") : Result.Failure("Failed to remove Recipe") };
+        }
+
+        public async Task<IEnumerable<RecipeCategory>> GetAllCategories() {
+            return await _dbContext.RecipeCategories.ToListAsync();
+        }
+
+        public async Task<IEnumerable<RecipeCategory>> GetCategoriesStartsWith(string name) {
+            return await _dbContext.RecipeCategories.Where(e => e.Name.ToLower().StartsWith(name.ToLower())).ToListAsync();
+        }
+
+        public async Task<RecipeCategory?> GetCategoryByIdAsync(Guid catId) {
+            return await _dbContext.RecipeCategories.FindAsync(catId);
         }
 
         private RecipeOverview MapRecipeToOverview(Recipe e) {
@@ -147,7 +160,7 @@ namespace EatIt.Core.Common.Services {
                 WorkDuration = e.WorkDuration,
                 TotalDuration = e.TotalDuration,
                 Description = e.Description,
-                Ingredients = e.Ingredients,
+                RecipeIngredients = e.RecipeIngredients,
                 AuthorId = e.AuthorId,
                 UserName = e.Author.UserName
             };
