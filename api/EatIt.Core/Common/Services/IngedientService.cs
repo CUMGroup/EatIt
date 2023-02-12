@@ -19,6 +19,10 @@ namespace EatIt.Core.Common.Services {
                 .ToListAsync();
         }
 
+        public async Task<Ingredient?> GetIngredientByIdAsync(Guid id) {
+            return await _dbContext.Ingredients.FindAsync(id);
+        }
+
         public async Task<IEnumerable<Ingredient>> GetIngredientsContainingAsync(string name) {
             return await _dbContext.Ingredients
                 .Where(e => e.Name.ToLower().Contains(name.ToLower()))
@@ -40,6 +44,13 @@ namespace EatIt.Core.Common.Services {
                     .Select(c => c.ToLower())
                     .Contains(e.Category.Name.ToLower()))
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<IngredientCategory>> GetAllIngredientCategoriesAsync() {
+            return await _dbContext.IngredientCategories.ToListAsync();
+        }
+        public async Task<IEnumerable<IngredientCategory>> GetAllIngredientCategoriesStartsWithAsync(string name) {
+            return await _dbContext.IngredientCategories.Where(e => e.Name.ToLower().StartsWith(name.ToLower())).ToListAsync();
         }
 
         public async Task<IngredientOperationResultModel> UpdateIngredientAsync(IngredientModel ingredient) {

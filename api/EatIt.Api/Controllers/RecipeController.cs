@@ -92,7 +92,7 @@ namespace EatIt.Api.Controllers {
 
         [HttpPost]
         [Route("search/category")]
-        public async Task<IActionResult> GetRecipesByNameStartsWith([FromBody]List<string> categories) {
+        public async Task<IActionResult> GetRecipesByCategories([FromBody]List<string> categories) {
             var res = await _recipeService.GetRecipesByCategoryAsync(categories);
             return Ok(res);
         }
