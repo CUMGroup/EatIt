@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EatIt.Core.Models.Joined;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -23,6 +24,6 @@ namespace EatIt.Core.Models.Atomic {
         public IngredientCategory? Category { get; set; }
 
         // Many to many with custom RecipeIngredient join table
-        public ICollection<Recipe> Recipes { get; set; }
+        //public ICollection<RecipeIngredient> RecipesIngedients { get; set; }
     }
 }
