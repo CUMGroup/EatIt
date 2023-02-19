@@ -15,6 +15,7 @@ namespace EatIt.Core.Database {
         public DbSet<WeeklyPlan> WeeklyPlans { get ; set ; }
 
         public DbSet<RecipeIngredient> RecipeIngredientsJoin { get ; set ; }
+        public DbSet<ShoppingIngredient> ShoppingIngredientsJoin { get ; set ; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
 
@@ -47,6 +48,16 @@ namespace EatIt.Core.Database {
             #region ShoppingIngredient Many to many
             builder.Entity<ShoppingList>()
                 .HasMany(x => x.Ingredients)
+                .WithOne();
+
+            builder.Entity<ShoppingIngredient>()
+                .HasOne(x => x.Ingredient)
+                .WithMany();
+
+            builder.Entity<ShoppingIngredient>()
+                .HasKey(x => new { x.ShoppingListId, x.IngredientsId });
+            /*builder.Entity<ShoppingList>()
+                .HasMany(x => x.Ingredients)
                 .WithMany()
                 .UsingEntity<ShoppingIngredient>();
 
@@ -57,7 +68,7 @@ namespace EatIt.Core.Database {
             builder.Entity<ShoppingIngredient>()
                 .HasOne(x => x.ShoppingList)
                 .WithOne()
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade);*/
             #endregion
 
             #region WeeklyPlanRecipe Many to many

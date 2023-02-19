@@ -1,4 +1,5 @@
-﻿using EatIt.Core.Models.Joined;
+﻿using EatIt.Core.Common.Enums;
+using EatIt.Core.Models.Joined;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,7 +18,10 @@ namespace EatIt.Core.Models.Atomic {
         public string Name { get; set; }
 
         [Required]
-        public double PricePerKg { get; set; }
+        public double PricePerUnit { get; set; }
+
+        [Required]
+        public Units Unit { get; set; }
 
         [ForeignKey("Category")]
         public Guid? CategoryId { get; set; }
