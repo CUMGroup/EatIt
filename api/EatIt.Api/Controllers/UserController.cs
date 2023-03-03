@@ -1,4 +1,5 @@
-﻿using EatIt.Core.Common.Interfaces;
+﻿using EatIt.Core.Common.DTO.Shopping;
+using EatIt.Core.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -56,6 +57,66 @@ namespace EatIt.Api.Controllers {
 
         private string? GetUserId() {
             return HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        [HttpGet]
+        [Route("shopping")]
+        [Authorize]
+        public async Task<IActionResult> GetUserShoppingList() {
+            var userId = GetUserId();
+            if (userId == null) {
+                return Forbid();
+            }
+            var shop = await _userService.GetShoppingListAsync(new Guid(userId));
+            return shop != null ? Ok(shop) : NotFound();
+        }
+
+        [HttpDelete]
+        [Route("shopping")]
+        [Authorize]
+        public async Task<IActionResult> ClearUserShoppingList() {
+            var userId = GetUserId();
+            if (userId == null) {
+                return Forbid();
+            }
+            var res = await _userService.ClearShoppingListAsync(new Guid(userId));
+            return res.Result.Succeeded ? Ok(res.Ingredients) : UnprocessableEntity(res.Result.Errors); 
+        }
+
+        [HttpPost]
+        [Route("shopping/ingredient")]
+        [Authorize]
+        public async Task<IActionResult> AddIngredientToShoppingList(IEnumerable<ShoppingIngredientModel> ingredients) {
+            var userId = GetUserId();
+            if (userId == null) {
+                return Forbid();
+            }
+            var res = await _userService.AddIngredientsToShoppingListAsync(new Guid(userId), ingredients);
+            return res.Result.Succeeded ? Ok(res.Ingredients) : UnprocessableEntity(res.Result.Errors);
+        }
+
+        [HttpPost]
+        [Route("shopping/recipe")]
+        [Authorize]
+        public async Task<IActionResult> AddRecipeToShoppingList(RecipeToShoppingListModel recipe) {
+            var userId = GetUserId();
+            if (userId == null) {
+                return Forbid();
+            }
+            var res = await _userService.AddRecipeIngredientsToShoppingListAsync(new Guid(userId), recipe);
+            return res.Result.Succeeded ? Ok(res.Ingredients) : UnprocessableEntity(res.Result.Errors);
+        }
+
+        [HttpDelete]
+        [Route("shopping/ingredient")]
+        [Authorize]
+        public async Task<IActionResult> RemoveIngredientFromShoppingList(ShoppingIngredientModel ingredient) {
+            var userId = GetUserId();
+            if (userId == null) {
+                return Forbid();
+            }
+            var res = await _userService.RemoveFromShoppingListAsync(new Guid(userId), ingredient);
+            return res.Result.Succeeded ? Ok(res.Ingredients) : UnprocessableEntity(res.Result.Errors);
         }
     }
 }
