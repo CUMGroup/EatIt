@@ -35,27 +35,31 @@ namespace EatIt.Core.Database {
 
             builder.Entity<RecipeIngredient>()
                 .HasKey(x => new { x.RecipeId, x.IngredientId });
-           /* builder.Entity<RecipeIngredient>()
-                .HasOne(x => x.Ingredient)
-                .WithOne()
-                .OnDelete(DeleteBehavior.NoAction);
-            builder.Entity<RecipeIngredient>()
-                .HasOne(x => x.Recipe)
-                .WithOne()
-                .OnDelete(DeleteBehavior.NoAction);*/
+            /* builder.Entity<RecipeIngredient>()
+                 .HasOne(x => x.Ingredient)
+                 .WithOne()
+                 .OnDelete(DeleteBehavior.NoAction);
+             builder.Entity<RecipeIngredient>()
+                 .HasOne(x => x.Recipe)
+                 .WithOne()
+                 .OnDelete(DeleteBehavior.NoAction);*/
             #endregion
 
             #region ShoppingIngredient Many to many
-            builder.Entity<ShoppingList>()
-                .HasMany(x => x.Ingredients)
-                .WithOne();
 
             builder.Entity<ShoppingIngredient>()
+                .HasKey(x => new { x.ShoppingListId, x.IngredientsId });
+
+            /*builder.Entity<ShoppingIngredient>()
                 .HasOne(x => x.Ingredient)
                 .WithMany();
 
             builder.Entity<ShoppingIngredient>()
-                .HasKey(x => new { x.ShoppingListId, x.IngredientsId });
+                .HasOne(x => x.ShoppingList)
+                .WithMany()
+                .HasForeignKey(x => x.UserId);
+            */
+            
             /*builder.Entity<ShoppingList>()
                 .HasMany(x => x.Ingredients)
                 .WithMany()
