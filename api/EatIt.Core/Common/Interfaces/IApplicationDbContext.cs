@@ -14,6 +14,7 @@ namespace EatIt.Core.Common.Interfaces {
         public DbSet<WeeklyPlan> WeeklyPlans { get; set;}
 
         public DbSet<RecipeIngredient> RecipeIngredientsJoin { get; set; }
+        public DbSet<ShoppingIngredient> ShoppingIngredientsJoin { get; set;}
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         Task<int> SaveChangesAsync();

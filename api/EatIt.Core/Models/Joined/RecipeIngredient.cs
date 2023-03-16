@@ -12,8 +12,6 @@ namespace EatIt.Core.Models.Joined {
 
         [Required]
         public double AmountForTwo { get; set; }
-        [Required, MaxLength(5)]
-        public string Unit { get; set; }
 
         [ForeignKey("Recipe")]
         public Guid RecipeId { get; set; }

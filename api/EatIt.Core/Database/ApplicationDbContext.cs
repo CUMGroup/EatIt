@@ -15,6 +15,7 @@ namespace EatIt.Core.Database {
         public DbSet<WeeklyPlan> WeeklyPlans { get ; set ; }
 
         public DbSet<RecipeIngredient> RecipeIngredientsJoin { get ; set ; }
+        public DbSet<ShoppingIngredient> ShoppingIngredientsJoin { get ; set ; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
 
@@ -34,18 +35,32 @@ namespace EatIt.Core.Database {
 
             builder.Entity<RecipeIngredient>()
                 .HasKey(x => new { x.RecipeId, x.IngredientId });
-           /* builder.Entity<RecipeIngredient>()
-                .HasOne(x => x.Ingredient)
-                .WithOne()
-                .OnDelete(DeleteBehavior.NoAction);
-            builder.Entity<RecipeIngredient>()
-                .HasOne(x => x.Recipe)
-                .WithOne()
-                .OnDelete(DeleteBehavior.NoAction);*/
+            /* builder.Entity<RecipeIngredient>()
+                 .HasOne(x => x.Ingredient)
+                 .WithOne()
+                 .OnDelete(DeleteBehavior.NoAction);
+             builder.Entity<RecipeIngredient>()
+                 .HasOne(x => x.Recipe)
+                 .WithOne()
+                 .OnDelete(DeleteBehavior.NoAction);*/
             #endregion
 
             #region ShoppingIngredient Many to many
-            builder.Entity<ShoppingList>()
+
+            builder.Entity<ShoppingIngredient>()
+                .HasKey(x => new { x.ShoppingListId, x.IngredientsId });
+
+            /*builder.Entity<ShoppingIngredient>()
+                .HasOne(x => x.Ingredient)
+                .WithMany();
+
+            builder.Entity<ShoppingIngredient>()
+                .HasOne(x => x.ShoppingList)
+                .WithMany()
+                .HasForeignKey(x => x.UserId);
+            */
+            
+            /*builder.Entity<ShoppingList>()
                 .HasMany(x => x.Ingredients)
                 .WithMany()
                 .UsingEntity<ShoppingIngredient>();
@@ -57,7 +72,7 @@ namespace EatIt.Core.Database {
             builder.Entity<ShoppingIngredient>()
                 .HasOne(x => x.ShoppingList)
                 .WithOne()
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade);*/
             #endregion
 
             #region WeeklyPlanRecipe Many to many

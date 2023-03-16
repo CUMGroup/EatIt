@@ -44,6 +44,7 @@ namespace EatIt.Core {
             services.AddTransient<IAuthService, AuthService>();
 
             services.AddTransient<IRecipeService, RecipeService>();
+            services.AddTransient<IIngredientService, IngredientService>();
 
             return services;
         }

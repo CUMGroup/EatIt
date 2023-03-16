@@ -6,11 +6,11 @@ using EatIt.Core.Models.Atomic;
 using Microsoft.EntityFrameworkCore;
 
 namespace EatIt.Core.Common.Services {
-    internal class IngedientService : IIngredientService {
+    internal class IngredientService : IIngredientService {
 
         private readonly IApplicationDbContext _dbContext;
 
-        public IngedientService(IApplicationDbContext dbContext) {
+        public IngredientService(IApplicationDbContext dbContext) {
             _dbContext = dbContext;
         }
 
@@ -57,7 +57,8 @@ namespace EatIt.Core.Common.Services {
 
             var resultIngredient = new Ingredient() {
                 Name = ingredient.Name,
-                PricePerKg = ingredient.PricePerKg
+                PricePerUnit = ingredient.PricePerUnit,
+                Unit = ingredient.Unit
             };
             
             // handle category
