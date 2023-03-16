@@ -10,6 +10,7 @@ namespace EatIt.Core.Common.DTO {
 
         public string[] Errors { get; private set; }
 
+
         private Result(bool succeeded, IEnumerable<string> errors) {
             Succeeded = succeeded;
             Errors = errors.ToArray();

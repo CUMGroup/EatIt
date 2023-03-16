@@ -37,7 +37,8 @@ namespace EatIt.Core.Models.Atomic {
         public string Description { get; set; }
 
         // Many to many with custom RecipeIngredient join table
-        public ICollection<Ingredient> Ingredients { get; set; }
+        //public ICollection<Ingredient> Ingredients { get; set; }
+        public ICollection<RecipeIngredient> RecipeIngredients { get; set; }
 
         [ForeignKey("Author"), Required]
         public Guid AuthorId { get; set; }

@@ -14,6 +14,8 @@ namespace EatIt.Core.Database {
         public DbSet<ShoppingList> ShoppingLists { get ; set ; }
         public DbSet<WeeklyPlan> WeeklyPlans { get ; set ; }
 
+        public DbSet<RecipeIngredient> RecipeIngredientsJoin { get ; set ; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
 
         }
@@ -22,18 +24,24 @@ namespace EatIt.Core.Database {
             base.OnModelCreating(builder);
             #region RecipeIngredient Many to many
             builder.Entity<Recipe>()
-                .HasMany(x => x.Ingredients)
-                .WithMany(x => x.Recipes)
-                .UsingEntity<RecipeIngredient>();
+                .HasMany(x => x.RecipeIngredients)
+                .WithOne();
+            //.UsingEntity<RecipeIngredient>();
 
             builder.Entity<RecipeIngredient>()
+                .HasOne(x => x.Ingredient)
+                .WithMany();
+
+            builder.Entity<RecipeIngredient>()
+                .HasKey(x => new { x.RecipeId, x.IngredientId });
+           /* builder.Entity<RecipeIngredient>()
                 .HasOne(x => x.Ingredient)
                 .WithOne()
                 .OnDelete(DeleteBehavior.NoAction);
             builder.Entity<RecipeIngredient>()
                 .HasOne(x => x.Recipe)
                 .WithOne()
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.NoAction);*/
             #endregion
 
             #region ShoppingIngredient Many to many
@@ -103,7 +111,7 @@ namespace EatIt.Core.Database {
             return Database.MigrateAsync();
         }
 
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken) {
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken) {
             return base.SaveChangesAsync(cancellationToken);
         }
 
